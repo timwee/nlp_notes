@@ -1,0 +1,60 @@
+POS tagging
+---------------
+- uses accuracy
+- 3% error rate?
+
+- SOTA
+	- 2016 PTB POS tagging
+		Multi-Task Cross-Lingual Sequence Tagging from Scratch
+		97.55 (close to SOTA of 97.78 Ling 2015)
+
+
+
+####################################################################################################################################
+
+NER
+---------------
+- gazetteer - dictionary
+- F1 score
+- SOTA
+	- 2016 CoNLL 2003 English NER 
+		Multi-Task Cross-Lingual Sequence Tagging from Scratch
+		91.2
+	- 2016 CoNLL 2002 Dutch NER 
+		Multi-Task Cross-Lingual Sequence Tagging from Scratch
+		85.19
+	- 2016 CoNLL 2002 Spanish NER 
+		Multi-Task Cross-Lingual Sequence Tagging from Scratch
+		85.77
+
+
+####################################################################################################################################
+
+Chunking
+---------------
+- F1 score
+- SOTA
+	- 2016 CoNLL 2000 English chunking.
+		Multi-Task Cross-Lingual Sequence Tagging from Scratch
+		95.41
+
+
+####################################################################################################################################
+
+SRL
+---------------
+- F1 score
+
+
+####################################################################################################################################
+
+word alignment
+---------------
+
+
+
+####################################################################################################################################
+
+Language model
+-----------------
+- 2016 goog exploring limits of lanuage modeling 23.7 perplexity from 41.0

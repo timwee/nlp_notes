@@ -1,0 +1,13 @@
+Torch
+-----------
+- a bit confusing with multiple packages (nn, optim, nngraph)
+- seems to have a lot of options for copying and not copying memory
+- concept of "views" into storage
+- seems to give a lot of flexibility
+
+
+######################################
+
+Tensorflow
+-------------
+- wire up the graph explicitly (though there are helper libraries like keras and tf-slim)

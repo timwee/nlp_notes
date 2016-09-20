@@ -1,0 +1,150 @@
+Resources
+-------------
+- https://en.wikipedia.org/wiki/Part_of_speech
+
+##############################################################################################################
+
+http://spacy.io/blog/part-of-speech-pos-tagger-in-python
+- he says just use averaged perceptron for POS
+- but then he praised collobert's system (nlp from scratch), as well as manning's work in 2011
+
+Learning models with EM
+---------------
+- Collins http://www.cs.columbia.edu/~mcollins/em.pdf
+- Maximizing data likelihood may not be your objective
+- the relationship between the structure of your model and the kinds of patterns it will detect can be complex
+
+
+Hard EM vs Soft EM
+---------------
+- probability vs counts
+
+HMM
+---------------
+very bad outside of domain
+
+Merialdo 1994
+---------------
+Accuracy decreased using maximum likelihood training for trigram HMM as num_iterations increased
+
+
+More Powerful Taggers
+---------------
+1. CRF
+a lot of the state of the art results
+
+2. Perceptron Taggers
+
+
+CRF
+---------------
+https://en.wikipedia.org/wiki/Gibbs_measure and https://en.wikipedia.org/wiki/Hammersley%E2%80%93Clifford_theorem
+http://blog.echen.me/2012/01/03/introduction-to-conditional-random-fields/ 
+https://www.youtube.com/watch?v=PGBlyKtfB74
+https://www.youtube.com/watch?v=uXV2an9TdJY
+- Naive Bayes:Logistic Regression as HMM:Linear Chain CRF
+- Partition function for CRF is across all paths, so expensive to compute.
+- We can build a CRF equivalent to any HMM by…
+see the link for more details
+- CRFs can model a wider class of problems bec. the weights and features can be different, whereas HMMs have the restrictions above.
+
+
+Linear Chain CRF vs RNN
+---------------
+https://www.youtube.com/watch?v=uXV2an9TdJY
+- 1 layer vs 2 layers.
+- CRF has no non-linearity before softmax
+- Linear Chain CRF takes the previous output and the current (to be scored) output as input to the current node. Note that this accumulates through the sequence. (ie. if we are at token n, P(y_n | x_n) = exp(sum( W_emit(x_k, y_k)) + sum( V_transition(y_k-1, y_k))), where the k's iterate from 0 to n in the first term, and n-1 in the second term)
+
+- RNN has a hidden layer (2 layers) and keeps track of the state so far as vectors.
+
+
+Adding Context to CRF
+---------------
+- see https://www.youtube.com/watch?v=G4lnHc2M1CA
+
+
+Computing Partition Function CRF
+---------------
+- naive is exponential (have to compute across all paths)
+- but can take advantage of linear sequence and use dynamic programming
+- belief propagation/sum-product/forward-backard algo for CRF
+
+
+CRF Training
+---------------
+- to train the weights of CRF, we can use gradient ascent.
+- derivative of log likelihood wrt to weight d/dw_i (log(p(l | s))) - s is sentence, l is label.
+
+CRF Inference/Prediction
+---------------
+https://www.youtube.com/watch?v=fGdXkVv1qNQ
+- bec. there are exponential number of tag sequences (k^m), where k is number of tags, and m is num_words in sentence, scoring all of them is expensive.
+- from right to left. (end of sequence to start)
+- We use Viterbi, bec. linear CRFs have optimal substructure
+
+
+
+
+
+NP Chunking VS pos tagging
+---------------
+http://stackoverflow.com/questions/8998979/what-is-the-difference-between-pos-tagging-and-shallow-parsing
+- POS tagging gives you the bottom most part of a parse tree
+- Parsing gives you a complete parse tree
+- Chunking gives you somewhere in between (parsed up to some level) - bec. full parsing may be expensive
+
+MeMM vs CRF
+---------------
+- think of both as graphical models. MeMM has very sparse connections (only for ones with observed data)
+- CRF does not have label bias problem
+- MeMMs normalize locally so that transitions coming out of a node are a probability distribution
+- CRFs normalize globally
+- MEMMs use a per-state exponential model
+- CRFs have a single exponential model for the joint probability of the entire label sequence
+
+
+Label Bias Problem
+---------------
+- think of MeMM, where you step through states 1 by 1 by conditioning on/feeding in the old state and new input. There might be some state where there is only 1 outgoing arc.
+	In this case, it will be P(new_state | old_state, new_input) = 1, for any new_input.
+
+####################################################################################################################################
+
+
+
+From Jurafsky book
+---------------
+- 8 tags since 2000 years ago. recent ones have more. 
+	45 for Penn TreeBank
+	100+ for more recent ones
+- closed vs open class types
+	1. closed - prepositions, pronouns, other function words
+	2. open - noun, verb, adjectives, etc.
+
+Tagsets
+---------------
+1. Penn - smaller 
+2. Brown - 87 tags
+
+
+Word properties/characteristics
+---------------
+- morphological - affixes/form
+- distributional - what commonly occurs around it
+- lexical - meaning (lexical relations include synonyms, antonyms, etc.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

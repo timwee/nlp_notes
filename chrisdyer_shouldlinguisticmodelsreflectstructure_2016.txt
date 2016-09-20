@@ -1,0 +1,72 @@
+- something to watch out for: RNNs overfit easily
+- CharLSTM > Lookup/word2vec for dependency parsing
+
+Morphological Typology 
+https://en.wikipedia.org/wiki/Morphological_typology#Synthetic_languages
+------------------
+1. Agglutinative (char RNN seems to win by a lot) - crazy morphology
+	turkish, finnish, basque, etc.
+2. Fusional https://en.wikipedia.org/wiki/Fusional_language (models are equivalent)
+	english
+3. Analytic https://en.wikipedia.org/wiki/Analytic_language (models are equivalent)
+
+
+vectors from charRNN
+------------------
+- can query using non-existing words and return reasonable looking results
+
+
+Language/character models
+-------------------
+He featured:
+1. Google Brain
+2. harvard/NYU - Kim, Rush, Sontag
+3. NYU/FB - document representation "from scratch"
+4. CMU - Dyer/Ruslan/Cohen - twitter, morphologically rich languages
+
+
+Finite state transducers - structure aware words (plural, etc.)
+---------------------
+- root + affixes
+
+
+
+Open Library Models
+---------------------
+- RNN, but not using word2vec lookups. Use morphology structure/seq as input
+
+
+Summary of charRNN vs lookup word2vec
+-------------------
+- for morphologically "tame" langauges like english and chinese, perplexity metrics are equivalent
+- would be useful for situations with a lot more variability
+
+
+#######################################################################################################################################
+
+Modeling Syntax
+-----------------
+
+RNN Grammar
+------------------
+- extension of Socher's work
+- words and constituents embedded in the same space
+- back prop "through structure"
+- capture linguistic notion of "headedness"
+- support any number of children
+- Intuition:
+1. generate symbols using RNN
+2. Add some control symbols to rewrite the history periodically
+	- periodically "compress" symbols into a single "constituent"
+	- augment RNN with an operation to compress recent history into a single vector ("reduce", similar to shift-reduce)
+	- RNN generates symbols based on history of compressed and non-compressed terminals ("shift"/generate)
+	- RNN must also predict "control symbols" that decide how big the constituents are
+
+
+
+
+
+
+
+
+

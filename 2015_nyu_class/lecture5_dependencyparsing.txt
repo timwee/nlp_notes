@@ -1,0 +1,152 @@
+Good Resources
+---------------
+- http://spacy.io/blog/parsing-english-in-python#
+- http://nlp.stanford.edu/software/parser-faq.shtml#y
+- https://en.wikipedia.org/wiki/Dependency_grammar
+- http://linguistics.stackexchange.com/questions/6875/why-is-dependency-parsing-so-much-faster-than-constituency-parsing
+- http://linguistics.stackexchange.com/questions/6863/how-is-the-f1-score-computed-when-assessing-dependency-parsing
+- http://linguistics.stackexchange.com/
+- http://stp.lingfil.uu.se/~nivre/master/parsing.html
+- https://vimeo.com/155313721 slav petrov 2015
+
+Videos
+---------------
+- https://vimeo.com/56829351 Joakim Nivre: Beyond MaltParser - Recent Advances in Transition-Based Dependency Parsing
+- https://www.youtube.com/watch?v=3_9PpKWY2fU 002. Towards a Universal Grammar for Natural Language Processing Joakim Nivre
+- https://vimeo.com/155313721
+
+Annotations
+---------------
+- http://universaldependencies.org/introduction.html
+- http://nlp.stanford.edu/software/stanford-dependencies.shtml
+
+Projective vs Non-Projective
+---------------
+- Projective means not crossing lines in projection. 
+- http://languagelog.ldc.upenn.edu/nll/?p=7851
+- http://www.seas.upenn.edu/~strctlrn/bib/PDF/nonprojectiveHLT-EMNLP2005.pdf 
+
+Parsing Techniques
+---------------
+- greedy/transition-based
+
+
+Evaluation
+---------------
+
+
+Representation for Greedy/Transition based parser
+---------------
+- heads array
+	if the i-th element in the heads array contains j, then there is an edge j -> i
+
+
+####################################################################################################################################
+From Dependency Parser Book
+----------------
+
+Dependency Relation
+----------------
+- (Type, Head word, dependent word). Syntactic structure consists of words linked by asymmetric relations. 
+- Have different types. (ie. SBJ, OBJ, ATT (attribute))
+
+ROOT
+-----------------
+- artificial node so that all words have syntactic heads.
+
+VS Constituent/phrase based
+------------------
+- phrase based cut sentences into groups of structural categories. (noun-phrase, verb-phrase, etc.)
+- in theory can convert one to the other, but in practice, hard.
+- people use a combination of both, they're not mutually exclusive
+- dependency parsers are more universal across languages
+
+Can have multiple stratum of trees
+-------------------
+- based on different themes?
+
+
+Types of Dependency Parsers
+------------------
+- grammar based vs data-based (not mutually exclusive)
+
+Types of Data driven parsers
+-------------------
+- graph based (aka maximum spanning tree algos)
+- transition based (aka shift-reduce dependency parsing)
+
+
+
+
+
+
+####################################################################################################################################
+From Petrov Lecture
+----------------
+
+Treebanks
+-----------------
+- can be inconsistent inside itself (same thing labeled differently)
+- collection of parse trees and sentences to train on
+
+CFG and PCFG
+-----------------
+- CYK algorithm O(N^3 * |G|) - N is length of sentence, G is grammar
+- 
+ 
+
+XBar
+-----------------
+https://en.wikipedia.org/wiki/X-bar_theory
+
+
+Evolution of phrasal parsing
+------------------
+- grammar (MLE from treebank)
+- PCFG
+- (head lexicalization) lexicalized grammar (add most important word in children to nodes) - collins, charniak (2000)
+	http://www.ling.upenn.edu/courses/cogs502/CharniakNAACL2000.pdf
+	Generative model
+	very slow, O(n^5)
+	In practice, go through with an unlexicalized grammar to prune, then 2nd pass with lexicalized
+- (structural annotation) grammar with structure annotation - NP^S, NP^VP. S and VP are parent (add "context" of one level)
+	- can also do neighbors along with parent
+- (state-splitting) Latent variable grammars/annotations (ie. each kind of node can have N number of annotations, learned via data)
+	- set number of latent variables
+	- do EM
+- CRF, Neural CRF (CRF + neural representations)
+	- Formally, our model is a CRF where the features factor over anchored rules of a small backbone grammar
+	- "surface feature" - feature that can be extracted without reference to the parse tree.
+	- some example features
+		1. "anchored"/location in tree features
+			- VP -> VBD, NP. (each of these rules gets a weight)
+		2. "unanchored"/phrase level features. examples:
+			- how often does a VP end in word W
+		3. interaction features of 1 and 2. (ie. first word = averted && parent = VP)
+				first word = averted && rule = VP->VBD NP
+	- a lot of features, esp if you count interactions. Keep the features that were observed on the training set as-is, hashing trick for "negative features"
+	- handle rare words by representing by its longest suffix that occurs 100 or more times in the training data
+	- "span" - a segment in the sentence. (i,j) - from word i to word j in sentence
+	- "span context" - words around the given span (before and after)
+	- split point features - features around the split point, like the words around it
+
+- LSTM parsing
+	- seq to seq - linearized parse tree
+
+
+Dependency Parsing
+-----------------
+- 2 types
+	1. graph based (slower, exhaustive, dynamic programming inference, higher order factorizations)
+	2. transition based (fast, greedy, linear time inference. greedy search/beam search)
+- 
+
+
+
+
+
+####################################################################################################################################
+
+Algorithms
+---------------
+- 

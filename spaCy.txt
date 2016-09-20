@@ -1,0 +1,11 @@
+Resources
+---------------
+1. https://www.reddit.com/r/spacynlp/comments/49cyjk/how_i_can_train_update_named_entity_recognition/
+2. https://www.reddit.com/user/syllogism_
+3. http://spacy.io/blog/how-spacy-works
+4. https://www.youtube.com/watch?v=gJJQs47aUQ0 Matthew Honnibal - Designing spaCy: Industrial-strength NLP
+
+
+
+
+####################################################################################################################################

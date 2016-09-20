@@ -1,0 +1,297 @@
+Resources
+--------------
+https://www.youtube.com/watch?v=B95LTf2rVWM - hugo larochelle
+http://sebastianruder.com/word-embeddings-1/index.html
+http://sebastianruder.com/word-embeddings-softmax/
+https://www.reddit.com/r/MachineLearning/comments/338sqx/hierarchical_softmax_why_is_it_faster/
+https://research.googleblog.com/2016/05/chat-smarter-with-allo.html
+https://www.quora.com/Word2vec-How-can-hierarchical-soft-max-training-method-of-CBOW-guarantee-its-self-consistence
+http://www-personal.umich.edu/~ronxin/pdf/w2vexp.pdf
+https://www.tensorflow.org/extras/candidate_sampling.pdf
+
+
+########################################################################################################################
+2008 A Unified Architecture for Natural Language Processing: Deep Neural Networks with Multitask Learning
+#####################
+
+Training time
+--------
+- language model 1 week
+- used language model word vectors to initialize word vectors for multi-task learning
+- multitask learning ~1 day
+
+Objective Function
+----------------
+- ranking loss
+
+
+Tasks
+----------------
+- Tasks they learn together
+	a. POS tagging
+	b. chunking
+	c. NER
+	d. SRL - "semantic role labeling" - higher level than parse tree
+		https://en.wikipedia.org/wiki/Semantic_role_labeling
+	e. Language models - P(sentence, etc | model)
+	f. semantically related words - wordnet
+- main focus was SRL - they thought it was the hardest
+
+
+Cascading Features
+---------------
+- "they cascade features learnt separately from other tasks, thus propagating errors."
+- traditional approach of NLP. (ie. train POS, use POS output as input to parser. Then input parser to SRL task.)
+
+
+Preprocessing and additional features
+------------------
+- word stemming, capitalization, etc.
+- SRL - distance to predicate
+- only take top 30k words in wikipedia, the rest map to a symbol UNK.
+
+Variable Sentence Length
+----------------------
+- simplest approach - window
+
+TDNN - Time Delay NN
+----------------------
+- convolution on a given sequence
+- over entire sentence so far.
+- can stack convolutions like in vision
+- they use max layer (max over time)
+- tanh for middle layers, softmax last
+
+
+MultiTask Learning
+--------------------
+- share training of word embedding
+- Can also introduce different (additional) embeddings for different tasks. So each word can have d embeddings.
+	- The task-specific embeddings will not be shared among tasks
+- Can view multi-task learning as regularization
+
+
+Training Prcedure
+--------------------
+1. Select the next task.
+2. Select a random training example for this task. 
+3. Update the NN for this task by taking a gradient step with respect to this example.
+4. Go to 1.
+
+
+
+Side comments
+----------------
+- linear models seem to perform ok for POS and NER 
+- SRL seems to need nonlinear
+
+
+
+Network Structure
+----------------
+- POS, NER
+	- 2 lookup tables - word embedding and capitalization embedding (dimension of 2)
+	- window size = 5
+	- linear models for POS and NER
+- chunking
+	- window size = 5
+	- hidden layer 200
+- language model
+	- window size = 11
+	- hidden layer 100
+- SRL
+	- window size = 3
+	- hidden layer1 100 nodes, hidden layer 2 100 nodes.
+	- 3 lookup tables
+		1. word
+		2. relative distance to word of interest
+		3. relative distance to verb - obtained from stanford POS tagger
+
+
+########################################################################################################################
+(Sketch of Wsabie (Weston, 2011)
+---------------------------------------------------
+
+Pairwise ranking loss
+---------------
+- use margin loss
+- sample until you get data that violates margin
+- seems somewhat similar 
+
+
+
+
+
+########################################################################################################################
+NLP (almost from scratch) 2011
+---------------------------------------------------
+
+Tasks
+----------------
+- Tasks they learn together
+	a. POS tagging
+	b. chunking
+	c. NER
+	d. SRL - "semantic role labeling" - higher level than parse tree
+		https://en.wikipedia.org/wiki/Semantic_role_labeling
+
+Tagging Schemes
+-----------------
+- NER, Chunk, and SRL all have different "tagging schemes". (labels)
+- IOBES, IOB, and IOS. They use IOBES bec. it's the most granular.
+
+
+Results
+----------------
+- they achieve almost SOTA in all 4 tasks (except for SRL)
+- time to predict is a lot less than benchmark systems.
+
+Overall Approach
+------------------
+1. train language model network using pairwise ranking criterion for word embeddings.
+2. take word vectors from 1., and train a separate network/s for NER, Chunk, POS, and SRL.
+- Note that they differentiate between WLL (word log likelihood) and SLL (sentence log likelihood) criterions.
+	- Sentence-level makes a diff for CHUNK, NER, and SRL.
+	- sentence level log likelihood computes across all possible tags through the sentence.
+	- uses viterbi
+
+
+Distinguish between Sentence approach and window approach
+----------------
+- sentence approach uses convolution and max layer to handle variable number of words
+
+
+PreProcessing
+----------------
+- stemming
+	can add 3 representations:
+	1. lower case stemmed root representation
+	2. ending representation
+	3. capitalization
+
+
+Models
+----------------
+- similar to 2008
+
+Multitask
+----------------
+- share word embeddings and first layer.
+- (they enlarged the first hidden layer)
+
+
+Additional features
+----------------
+For their highest scores, they added 1 task-specific feature per task:
+- POS - suffix (last 2 chars)
+- NER - Gazetteer/dictionary - if the current words are in the dictionary
+- Chunk - POS tags
+- SRL - Chunks < parse trees.
+
+Comparison with other embeddings
+----------------
+- compared with brown clusters
+- 
+
+
+Nice visualization
+----------------
+- p. 12 about number of features activated by the max layer for SRL tax given example sentences.
+
+Max Layer
+--------------
+- max over each dimension?
+
+
+
+Training + Time
+--------------
+- maximum likelihood, stochastic ascent.
+- 2 potential different approaches for log likelihood
+	- word-level log likelihood - likelihood of tag given window/sentence. independent of other tags.
+	- sentence-level log likelihood
+- language model network
+	- used ranking pairwise criterion instead
+	- 4 weeks + 3 weeks!
+
+
+
+########################################################################################################################
+word2vec
+########################################################################################################################
+
+Differences with C&W
+--------------
+- Instead of MLP uses (bi)linear model (linear in paper)
+- main advantage is that both CBoW and SkipGram are cheaper to train.
+- Instead of ranking model, directly predict word (cross-entropy)
+- Various other extensions.
+
+CBoW vs SkipGram
+--------------
+
+
+
+
+########################################################################################################################
+General problems with word2vec, and windowed approach
+########################################################################################################################
+
+Softmax issues
+-------------
+- num class is huge. (partition function)
+- order is lost
+
+Mitigating Softmax Issues
+------------------
+- sampling based
+- changing softmax structure
+
+
+Changing Softmax Structure (http://sebastianruder.com/word-embeddings-softmax/)
+--------------------
+- Hierarchical Softmax
+- D-Softmax (differentiated softmax)
+	- less params in embedding for rare words bec. there's less samples to train on.
+	- faster to model but does not model rare words as well.
+- CNN-Softmax
+	- used by 2016 limits of language modeling
+
+
+Sampling - during training
+------------------
+- main idea is that during backprop, we need to positively reinforce the correct word and negatively reinforce all other words. Since computing the weights for all other words is expensive, we can try to estimate this effect.
+- approaches
+	1. importance sampling and variants
+	2. noise contrastive estimation 
+		(https://www.tensorflow.org/versions/r0.9/tutorials/word2vec/index.html)
+		http://arxiv.org/abs/1410.8251
+		One caveat of NCE is that as typically different noise samples are sampled for every training word ww, the noise samples and their gradients cannot be stored in dense matrices, which reduces the benefit of using NCE with GPUs, as it cannot benefit from fast dense matrix multiplications. Jozefowicz et al. (2016) and Zoph et al. (2016) independently propose to share noise samples across all training words in a mini-batch, so that NCE gradients can be computed with dense matrix operations, which are more efficient on GPUs.
+	3. Negative Sampling
+		- approximation to noise contrastive estimation. 
+		- We have seen that NEG is only equivalent to NCE when k=|V| and Q is uniform.
+
+
+Hierarchical Softmax
+--------------------
+1. We create a tree structure for the words, where each leaf correspond to a word.
+	- it helps if this tree structure is arranged so that it helps in the prediction of which path to take.
+	- also use huffman encoding - shorter paths for more common words
+2. Each non-child node in the tree has a corresponding vector embedding.
+3. To estimate P(word_i | context/hidden layer), we compute:
+	P(take_left at 1st level | context), all the way to word_i in the tree.
+	Note that it can be take_right as well, as long as it's consistent.
+	P(take_right) is just 1 - P(take_left).
+- This decreases computing the probability to be O(log(|V|)) instead of O(|V|)
+- How to generate the tree (https://www.youtube.com/watch?v=B95LTf2rVWM)
+	- random
+		likely to be suboptimal
+	- use existing resources like wordnet
+		- speedup but decrease in pred performance
+	- learn hierarchy using a recursive partitioning strategy
+		1. first train from random tree.
+		2. hierarchical clustering approach from step 1
+
+
+
+

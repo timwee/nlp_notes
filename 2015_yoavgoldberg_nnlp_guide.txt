@@ -1,0 +1,246 @@
+
+
+A Primer on Neural Network Models for Natural Language Processing
+- use pre-trained word vectors as input to classification models. 
+- can also do Part of Speech embeddings
+- recurrent vs recursive networks
+
+Dense VS sparse representation
+1. the majority of neural network toolkits do not play well with very high-dimensional, sparse vectors.
+2. better generalization
+- Variable number of features
+1. use CBOW (continuous bag of words) or the weighted version
+	the weighted version can use tf-idf as the weight
+- distance of words as a feature. 
+	(Zeng et al., 2014; dos Santos et al., 2015; Zhu et al., 2015a; Nguyen & Grishman, 2015).
+- Kernels vs neural networks
+	However, the classification efficiency in kernel methods scales linearly with the size of the training data, making them too slow for most practical purposes, and not suitable for training with large datasets. On the other hand, neural network classification efficiency scales linearly with the size of the network, regardless of the training data size.
+- Dimensionality
+no theory, have to play with it
+- Same Vector in different contexts
+ie. if we want to put in the vector of the prev word and the next word.. should we use the same vector if the word (ie. dog) is the same
+Have to try empirically again. If you think that words behave differently based on position, then try different vectors
+- Historical Note 
+Representing words as dense vectors for input to a neural network was introduced by Bengio et al (Bengio et al., 2003) in the context of neural language modeling. It was introduced to NLP tasks in the pioneering work of Collobert, Weston and colleagues (2008, 2011). Using embeddings for representing not only words but arbitrary features was popularized following Chen and Manning (2014)
+
+Feed-Forward networks
+- Common non-linearities
+1. ReLU - val < x -> 0
+	 	  val >= x -> val
+2. sigmoid
+3. tanh
+4. hard tanh if x within [-1,1]: x 
+			 elif x > 1: 1
+			 elif x < -1: -1
+As a rule of thumb, ReLU > tanh > sigmoid.
+- Output transform
+Usually softmax. Good if paired with probabilistic training objective like cross-entropy.
+- Combining Embedding vectors (ie. for multiple words, POS, distance between words, etc.)
+1. sum (think matrix multiple of vector representations and one hot encoded vector)
+2. concatenate
+- layer normalization
+- regularization
+1. L2
+2. Dropout
+
+Common Loss functions
+1. Hinge (binary) - The loss is 0 when y and yˆ share the same sign and |yˆ| ≥ 1. Otherwise, the loss is linear. In other words, the binary hinge loss attempts to achieve a correct classification, with a margin of at least 1.
+2. Hinge (multiclass) - The multiclass hinge loss attempts to score the correct class above all other classes with a margin of at least 1. In practice, we minimize against the max class that's not correct.
+Both the binary and multiclass hinge losses are intended to be used with a linear output layer. The hinge losses are useful whenever we require a hard decision rule, and do not attempt to model class membership probability.
+3. log-loss - soft hinge loss
+log(1 + exp(-(y_t - y_k)))
+4. negative log likelihood/categorical cross-entropy loss - measures the dissimilarity between the true label distribution against the predicted
+For hard classification problems, typically try to maximize the mass on correct class/label only.
+Fits with softmax layer.
+5. Ranking Loss
+	- margin based ranking loss - max(0, 1- (NN(positive_example) - NN(negative_example)))
+		try to maximize margin between correct and incorrect (make it > 1)
+	- log margin based ranking loss - log(1 + exp(-(NN(positive_example) - NN(negative_example))))
+
+Word Embeddings
+- methods
+1. Random Initialization
+	- word2vec - uniformly sample [-(1/2d), (1/2d)], where d is the number of dimensions
+	- xavier initialization - [-(sqrt(6)/sqrt(d)), (sqrt(6)/sqrt(d))]
+	In practice, use random initialization for commonly occuring features, but pretraining vectors for rare features like words.
+2. Supervised Task Pre-training
+	If we are interested in task A (ie. syntactic parsing), where we don't have a lot of data but we have a lot of data for a related task B (ie. POS tagging), then we can use pre-trained vectors from task B for task A. (can also do joint training, see "model cascading")
+3. Unsupervised pre-training
+	word2vec, glove
+- Choice of Context
+1. Window approach - CBOW/Skipgram
+	+ choice of window size - larger windows tend to produce more topical similarities, smaller windows more functional/syntactic similarities
+		(dog, bark, leash) vs (poodle, rottweiler)
+2. Positional window
+	add in the distance from the focus word. (ie. dog:+2, or dog:-2)
+3. variants
+	a. preprocess words (lemmatize, filter short sentences, remove capitalization, skip too common or too rare words)
+5. Syntactic Window
+	First, parse the context that the word is in (ie. using dependency parsing). Use the parsed tree and annotations as the "window" for the word.
+	References:
+	1. Levy & Goldberg, 2014a Dependency-Based Word Embeddings
+	2. Bansal, Gimpel, & Livescu, 2014 - Tailoring Continuous Word Representations for Dependency Parsing
+6. Sentences/Paragraphs/Documents
+	only the words int the same sentence/paragraph
+7. Character based and subwords
+	- good for unknown words and syntax, and for morphologically rich languages
+	- can be combined with word embeddings - middleground
+
+
+
+Multitask learning
+2011 Natural language processing (almost) from scratch
+
+
+Structured Output prediction
+- Greedy structured prediction
+Decompose the problem into a sequence of local prediction problems and training a classifier to perform each local decision.
+Suffers from error propagation - mistakes earlier will influence later predictions. Can mitigate somewhat by predicting "easy" parts first before hard ones.
+Myopic.
+- search based structured prediction
+Margin hinge loss might be preferred.
+max(0, m + score(x, y) − max score(x, y′)), y is the correct structure, and y` is the next best
+The main idea is to score each candidate structure and take the max scoring one. Traditionally, each structure can be decomposed into parts, which are scored separately then summed together.
+- Probabilistic objective (CRF)
+P(y | x). Similar to search based where we decompose structure into parts then score them separately.
+The "partition function" (normalization constant/denominator) can be expensive to compute.
+Can use approximations for computing partition function (ie. beam search)
+- reranking
+produce candidates with cheap model then rerank with more complex model.
+
+
+Convolutional Layers
+- refresher
+1. padding
+2. shared parameters
+3. pooling layer
+- word2vec/CBoW ignores the ordering of words, which can be important. A naive approach to encode this might be to put in ngrams instead of words, but this would result in large embedding matrices with sparse data.
+- Besides being useful for prediction, a by-product of the training procedure is a set of parameters W, B and embeddings v() that can be used in a convolution and pooling architecture to encode arbitrary length sentences into fixed-size vectors, such that sentences that share the same kind of predictive information will be close to each other.
+- Dynamic, Hierarchical and k-max Pooling
+Depending on the task, we can do dynamically sized pooling. ie. for deciding the relation between 2 words, we could split the words into 3 pools, 1 before the first word, 2 in between the 2 words, 3 after the 2nd word.
+Can also retain top-k values instead of 1 for max pooling.
+- Variations
+Train N numbers of convolutions at the same time, with different sizes, capturing different ngram sizes.
+Convolutions over nodes in a tree, or dependency parser output, instead of just linear sequence/sentence.
+
+
+
+
+RNN
+- Mathematically, we have a recursively defined function R that takes as input a state vector si and an input vector xi+1, and results in a new state vector si+1. An additional function O is used to map a state vector si to an output vector yi. When constructing an RNN, much like when constructing a feed-forward network, one has to specify the dimension of the inputs xi as well as the dimensions of the outputs yi. The dimensions of the states si are a function of the output dimension.
+- While RNN architectures in which the state dimension is independent of the output dimension are possible, the current popular architectures, including the Simple RNN, the LSTM and the GRU do not follow this flexibility.
+- equation (s is state, x is input, y output. R and O are the weight matrices. These are shared "through time")
+RNN(s0,x1:n) =s1:n, y1:n
+si = R(si−1, xi)
+yi = O(si)
+- Dealing with vanishing gradient problem
+1. "Unroll" only k steps before backproping, then unroll again, instead of unrolling for entire sequence, then doing 1 backprop
+2. LSTM and GRU are less designed to deal with this
+- Where to apply the "supervision signal"
+1. Acceptor
+at the very end of the sequence
+uses: sentiment analysis
+2. Encoder
+use RNN's final vector along with other features
+uses: document summarization
+3. Transducer
+produce output for every step/input it receives. The loss for the unrolled sequence can be the sum/avg/weighted_avg of all the losses accumulated at each step.
+uses: Sequence Tagger
+4. Encoder-Decoder
+RNN used to encode a sequence into a vector. Then this vector is used as auxiliary input into another RNN for decoding.
+uses: machine translation
+In a machine-translation setup the first RNN encodes the source sentence into a vector representation yn, and then this state vector is fed into a separate (decoder) RNN that is trained to predict (using a transducer-like language modeling ob- jective) the words of the target language sentence based on the previously predicted words as well as yn. The supervision happens only for the decoder RNN, but the gradients are propagated all the way back to the encoder RNN
+In order for this technique to work, Sutskever et al found it effective to input the source sentence in reverse, such that xn corresponds to the first word of the sentence. 
+sequence transduction
+
+
+
+Multilayer/stacked RNN
+- The input of the first layer RNN is x and the prev first layer state. The input of the jth RNN in the stack is from the j-1th, and the previous jth RNN state
+
+BiRNN
+- To do prediction for ith word, we have 2 RNNs. One from 1 to (i-1), the other from (i+1) to n.
+uses: sequence tagging
+
+ Note on Reading the Literature
+Unfortunately, it is often the case that inferring the exact model form from reading its description in a research paper can be quite challenging. Many aspects of the models are not yet standardized, and different researchers use the same terms to refer to slightly different things. To list a few examples, the inputs to the RNN can be either one-hot vectors (in which case the embedding matrix is internal to the RNN) or embedded representations; The input sequence can be padded with start-of-sequence and/or end-of-sequence symbols, or not; While the output of an RNN is usually assumed to be a vector which is expected to be fed to additional layers followed by a softmax for prediction (as is the case in the presentation in this tutorial), some papers assume the softmax to be part of the RNN itself; In multi-layer RNN, the “state vector” can be either the output of the top-most layer, or a concatenation of the outputs from all layers; When using the encoder-decoder framework, conditioning on the output of the encoder can be interpreted in various different ways; and so on. On top of that, the LSTM architecture described in the next section has many small variants, which are all referred to under the common name LSTM. Some of these choices are made explicit in the papers, other require careful reading, and others still are not even mentioned, or are hidden behind ambiguous figures or phrasing.
+
+
+
+Simple RNN
+- read Mikolov's thesis
+
+
+LSTM
+- description
+In a simple RNN, there is one nonlinearity layer (tanh, etc.)
+For LSTM there are 4. (h - hidden layer, c - memory cell state, x - input)
+Note that intuitively, tanh is used to provide nonlinearity, while sigmoid is used to filter/step function.
+1. (f_i) forget gate - sigmoid. looks at h_t-1 and x_t to see which values in c_t-1 to keep
+2. (i_i) input gate - sigmoid, h_t-1 and x_t
+3. (C~_i) and "candidate gate" - tanh, h_t-1 and x_t 
+4. (o_i) output gate - sigmoid, h_t-1 and x_t
+
+Update C_t
+C_t = (C_t-1 * f_t) + i_t * C~_t
+
+Update h_t
+h_t = o_t * (tanh(C_t))
+
+- LSTM has many variants and people/papers each have their little tweaks. Popular ones include
+1. peephole
+Allow to look at C_t, in f_t, i_t, and/or o_t.
+2. coupled input/forget gates. (combine these 2 into using the same one)
+C_t = (C_t-1 * f_t) + (1- f_t) * C~_t
+
+- chris olah http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+LSTMs are currently the most successful type of RNN architecture, and they are re- sponsible for many state-of-the-art sequence modeling results. The main competitor of the LSTM-RNN is the GRU, to be discussed next.
+- Practical Considerations 
+When training LSTM networks, Jozefowicz et al (2015) strongly recommend to always initialize the bias term of the forget gate to be close to one. When applying dropout to an RNN with an LSTM, Zaremba et al (2014) found out that it is crucial to apply dropout only on the non-recurrent connection, i.e. only to apply it between layers and not between sequence positions.
+
+
+
+GRU
+- no memory cell.
+- moving parts
+1. gate r - sigmoid on x_t and h_t-1. used to control access to previous state s_t-1, and to compute proposed update h.
+2. h - proposed update. tanh on x_t and h_t-1 * r
+3. s - state. no non-linearity. updated by linearly interpolating between s_t-1 and h. Interpolation constant is from z
+4. z - sigmoid on x_t and h_t-1. determines amount of interpolation between s_t-1 and h.
+
+
+Simple RNN variants
+- Mikolov 2014
+observed that the matrix multiplication s_i−1 * W coupled with the nonlinearity g in the update rule R of the Simple RNN causes the state vector s_i to undergo large changes at each time step, prohibiting it from remembering information over long time periods.
+Proposed to split the state vector s into 2  parts:
+1. fast changing component h_i
+h_i is similar to the simple RNN update, but now include c_i as well.
+h_i = sigmoid (x_i * W + h_i-1 * W + C_i * W)
+2. slow changing component c_i. (they called it "context" units)
+c_i is updated via a linear interpolation of the input and the previous c_i-1. This update allows c_i to accumulate the previous c_i-1s
+
+The output becomes the concatenation of c_i and h_i.
+
+
+
+
+Recursive NN
+- encodes each tree node as a state vector
+- each tree node's representation is a function of it's children's representations.
+vec(p) = f(vec(c1),vec(c2)), where f is a composition function taking two d-dimensional vectors and returning a single d-dimensional vector. 
+- can represent a tree as a set of production rules
+(A → B, C, i, k, j)
+A is the root node's label, B and C are the children labels. i, j, and k denote the nodes that go on the left side of the tree vs the right.
+(i,j] on left, (j,k) on right
+- a recursive neural network's inputs:
+parse tree of sentence. 
+1. Each word is represented by a d-dimensional vector x_i.
+2. The tree is represented by a set of production rules.
+- output
+1. A set of "inside state vectors" (A, i, j), where each vector represents a node rooted at A, which spans from node i to node j.
+- Transformation/combination function R
+At each node, we combine it's children's representations using R.
+R can have a weight matrix W shared across all the nodes. We can merge the vectors of the children, as well as label embeddings (if they exist)and multiply them with W, then optionally apply a non-linearity.
+
+
+

@@ -1,0 +1,232 @@
+Note:
+- look at MCollins class and Jufrasky book on POS tagging as well
+- about accuracy - most metrics are on the word level, not sentence. 
+Sentence is around 50-60% accurate. word is around 97% accurate
+
+http://spacy.io/blog/part-of-speech-pos-tagger-in-python
+- he says just use averaged perceptron
+- but then he praised collobert's system (nlp from scratch), as well as manning's work in 2011
+
+####################################################################################################################################
+MCollins
+---------------
+2 forms of tagging:
+1. POS
+2. NER
+
+POS tagging challenges
+----------------
+- one of the main challenges is ambiguity of words depending on location
+- sparsity of data for words
+
+NER as a tagging problem
+----------------
+- when looking to tag a particular entity, we can create a training dataset where the words that are not entities are labeled as such (NA)
+- if the entity consists of multiple words, we can tag the beginning of the word as a particular tag, (SC), or continuation of that tag (CC)
+
+MeMM features
+----------------
+- word-tag interaction
+- prefix and suffix features interacting with tag
+- ngram tag features - ngrams of tags up to current location to predict
+- surrounding words-tag interaction
+
+
+####################################################################################################################################
+
+Jufrasky
+---------------
+
+Other Languages - Chinese
+---------------
+Different problems occur with languages like Chinese in which words are not segmented in the writing system. For Chinese part-of-speech tagging word segmen- tation (Chapter 2) is therefore generally applied before tagging. It is also possible to build sequence models that do joint segmentation and tagging. Although Chinese words are on average very short (around 2.4 characters per unknown word com- pared with 7.7 for English) the problem of unknown words is still large, although while English unknown words tend to be proper nouns in Chinese the majority of unknown words are common nouns and verbs because of extensive compounding. Tagging models for Chinese use similar unknown word features to English, includ- ing character prefix and suffix features, as well as novel features like the radicals of each character in a word. One standard unknown feature for Chinese is to build a dictionary in which each character is listed with a vector of each part-of-speech tags that it occurred with in any word in the training set. The vectors of each of the characters in a word are then used as a feature in classification.
+
+
+####################################################################################################################################
+
+Data and TagSets
+--------------------------------
+1. Penn Tree TagSet
+2. Brown tagset
+
+####################################################################################################################################
+
+English
+--------------------------------
+Ambigious - even though most word classes are unambigious, the ambigious ones tend to be the most common words used.
+
+
+####################################################################################################################################
+
+
+Linguistic Structures
+--------------------------------
+1. Syntactic word classes (lexical categories - to distinguish from phrasal categories)
+- https://en.wikipedia.org/wiki/Syntactic_category
+- Example types
+	1. verbs
+	2. adverbs
+	3. nouns
+	4. adjectives
+	5. numbers
+	6. determiners
+	7. conjunctions
+	8. pronouns
+	9. particles
+2. phrasal categories 
+- https://en.wikipedia.org/wiki/Phrase_structure_grammar
+- aka constituency grammars
+- context-free
+- Examples:
+	a. Noun phrase (NP)
+	b. VP (verb phrase)
+ 
+
+Open vs Closed Word Class
+--------------------------------
+Closed:
+prepositions: on, under, over, near, by, at, from, to, with 
+determiners: a, an, the
+pronouns: she, who, I, others
+conjunctions: and, but, or, as, if, when
+auxiliary verbs: can, may, should, are 
+particles: up, down, on, off, in, out, at, by 
+numerals: one, two, three, first, second, third
+
+
+Constituency vs dependency
+--------------------------------
+- https://en.wikipedia.org/wiki/Dependency_grammar#Dependency_vs._constituency
+
+
+Constituency Relation
+--------------------------------
+- initial binary division of sentence. (subject-predicate)
+- one-to-one-or-more correspondence
+
+
+Dependency relation
+--------------------------------
+- one-to-one relation (1 node per word)
+
+
+
+
+Content word
+--------------------------------
+- means nouns, verbs, adjectives, etc. Not "function words"
+
+Function words
+--------------------------------
+- words to express grammatical relationships between words in a sentence
+- examples
+1. pronouns
+2. conjunctions
+3. adpositions
+
+
+Lexical category
+--------------------------------
+- can have 2 distinct meanings
+1. word classes
+2. phrases that start with a content word
+
+
+Why POS tagging?
+--------------------------------
+1. useful in of itself
+- text to speech
+- lemmatization
+- quick and dirty NP chunk detection
+2. Useful as preprocessing step for parsing
+- less ambiguity means fewer parses
+
+HMM - POS tagging classical solutions
+--------------------------------
+- condition only on the state so far.
+- assumptions are fairly naive/broken.
+- HMM variations
+	bigram/trigram/ngram tagger.
+- state estimation
+	last N tags.
+	Use smoothed estimation like with ngram language model (kneser Ney, etc)
+- emission estimation
+	tricky bec. of unknown words and unseen state-word pairs.
+	Can use good-turing, or create an unknown word class.
+- disambiguation (Inference)
+1. Find the most likely (Viterbi path through sequence) can create too many paths.
+2. First solution: use beam search. (recall: just keep top N at each step or candidates within % of best)
+	- works ok in practice.
+	- sometimes we want optimal though
+3. Viterbi Algorithm
+
+
+--------------------------------
+Has nice slides for accuracy of state of the art for various methods and languages.
+
+
+TnT tagger
+--------------------------------
+- uses trigrams of tags to estimate next tag. (last 2 tags as state)
+- add smoothing (similar to ngram language models)
+- the smoothing's parameters (on unigram/bigram/etc) are global (not context or word dependent)
+- used suffix tree to handle unknown words. Also did conditioning on letters/suffix of the unknown word
+
+
+Taggers:
+--------------------------------
+http://www.nltk.org/api/nltk.tag.html#module-nltk.tag
+1. crf
+2. MEMM (maximum entropy markov model)
+3. MaxEnt
+4. TriGram HMM
+5. TnT (tags and TriGram) HMM
+6. MeMM with neural network (state of the art 2016?) 
+
+- (Mine) how about bi-RNN with previous tags?
+
+
+Evaluating taggers:
+--------------------------------
+- accuracy on known vs unknown words
+
+
+Tagger features:
+--------------------------------
+1. The word itself, and "shape" (suffix, prefix, capitalization, with number, with dash). 
+2. The surrounding words without ordering and their features/shapes.
+3. Put ordering in.
+
+MeMM taggers
+--------------------------------
+- condition on N previous tags.
+- Natural extension of MaxEnt: neural net version! (latest state-of-the-art)
+- label bias problem
+“This per-state normalization of transition scores implies a “conservation of score mass” (Bottou,
+1991) whereby all the mass that arrives at a state must be distributed among the possible successor states. An observation can affect which destination states get the mass, but not how much total mass to pass on. This causes a bias toward states with fewer outgoing transitions. In the extreme case, a state with a single outgoing transition effectively ignores the observation. In those cases, unlike in HMMs, Viterbi decoding cannot downgrade a branch based on observations after the branch point, and models with statetransition
+structures that have sparsely connected chains of states are not properly handled. The Markovian assumptions
+in MEMMs and similar state-conditional models insulate decisions at one state from future decisions in a way
+that does not match the actual dependencies between consecutive states.”
+
+
+
+Accuracy:
+--------------------------------
+- in-domain > 97%
+- out-of-doamin < 90&
+
+
+Papers:
+--------------------------------
+- A Universal Part-of-Speech Tagset
+http://arxiv.org/abs/1104.2086
+- Senna (2011 NLP (almost) from scratch)
+from Ronan Collobert
+
+
+
+
+
+
+
+

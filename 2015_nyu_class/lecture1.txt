@@ -1,0 +1,118 @@
+What Actually Works
+- Trigrams and beyond
+	unigrams and bigrams are useless
+	4-5 grams useful in MT but not as much for speech
+- Discounting
+	Absolute discounting, Good- Turing, held-out estimation, Witten-Bell
+- Context counting
+	Kneser-Ney construction
+
+
+
+Language Models (LM)
+1. NGram
+2. PCFG
+3. 
+
+
+
+
+
+Measuring LM quality
+http://nlpers.blogspot.com/2014/05/perplexity-versus-error-rate-for.html
+1. Perplexity
+	Interpretation: average branching factor in model
+	Perplexity just measures the cross entropy between the empirical distribution (the distribution of things that actually appear) and the predicted distribution (what your model likes) and then divides by the number of words and exponentiates after throwing out unseen words.
+	Seems to be more generative.
+2. Word Error Rate (prediction error)
+3. External metric - custom to whatever task you are doing
+
+Common issue: intrinsic measures like perplexity are easier to use, but extrinsic ones are more credible
+
+
+Sparsity
+- haven't seen most words/ngrams before.
+
+Parameter Estimation
+- Maximum likelihood estimates won’t get us very far. Need to smooth these estimates.
+
+
+Smoothing
+- counting/pseudo counting (laplace, hierarchical counting, dirichlet)
+	Problem: works quite poorly!
+- Linear Interpolation (Chen and Goodman)
+	works better than dirichlet priors. Not entirely clear why
+- Good Turing reweighing
+- Kneser-Ney - more successful
+	http://www.foldl.me/2014/kneser-ney-smoothing/
+	http://www.aclweb.org/website/old_anthology/P/P06/P06-1124.pdf
+	Idea 1: observed n-grams occur more in training than they will later:
+		Absolute Discounting:
+		+ Save ourselves some time and just subtract 0.75 (or some d)
+		+ Maybe have a separate value of d for very low counts
+	Idea 2: Type-based fertility rather than token counts
+		- how many words precede this word in the corpus. (probability allowed in a novel context)
+
+
+
+
+
+
+A Statistical MT Tutorial Workbook
+- syntactic transfer
+- could not stand reading this paper
+
+
+
+
+
+
+2007 Large Language Models in Machine Translation - Google
+- N-gram model
+- "Stupid backoff" - not quite Kneser-Ney. Uses un-normalized scores. 
+- mostly shows the effect of using more data
+
+
+
+
+
+
+
+
+A Neural Probabilistic Language Model
+- curse of dimensionality for building language models. (too many rare words, combinatorial when building sentences)
+- Non-parametric density estimation - probability mass initially concentrated on training points in a large volume, distribute probability mass where it matters instead of uniformly around training points.
+- Proposal
+1. associate with each word in the vocabulary a distributed word feature vector (a real- valued vector in Rm),
+2. express the joint probability function of word sequences in terms of the feature vectors of these words in the sequence, and
+3. learn simultaneously the word feature vectors and the parameters of that probability function.
+- Intuition
+1. Similar words should have similar word vectors
+2. A small change in the features should induce a small change in probability because it's a smooth function of the features
+- instead of characterizing the similarity with a discrete random or deterministic variable (which corresponds to a soft or hard partition of the set of words), we use a continuous real-vector for each word, i.e. a learned distributed feature vector, to represent similarity between words
+- Experiments suggest that learning jointly the representation (word features) and the model is very useful. We tried (unsuccessfully) using as fixed word features for each word w the first principal components of the co-occurrence frequencies of w with the words occurring in text around the occurrence of w.
+- Learn both feature vectors C, and a neural network g that can predict the next word given past words.
+- Neural network description
+1. Single layer, tanh activation
+2. Have to account for variable length input
+- Neural network parameters
+1. b - output biases
+2. d - hidden layer biases
+3. W - word features to output weights - if direct connection to output layer
+4. U - hidden to output layer weights
+5. H - hidden layer weights (input to hidden?)
+6. C - word features
+- Comparison against linearly interpolated ngram model with backoff, params of backoff are estimated via EM (upto trigrams)
+P( w t | w t − 1 , w t − 2 ) = α 0 ( q t ) p 0 + α 1 ( q t ) p 1 ( w t ) + α 2 ( q t ) p 2 ( w t | w t − 1 ) + α 3 ( q t ) p 3 ( w t | w t − 1 , w t − 2 )
+- Out-of-vocabulary words - first guess an initial feature vector for such a word, by taking a weighted convex combination of the
+feature vectors of other words that could have occurred in the same context, with weights proportional to their conditional probability. Then put it in the network and train
+- seems to be a fixed window
+
+
+
+
+
+
+
+
+

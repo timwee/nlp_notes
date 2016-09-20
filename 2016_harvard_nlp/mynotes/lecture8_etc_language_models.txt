@@ -1,0 +1,96 @@
+Quality Metric
+-----------------
+Perplexity
+- log2(perplexity) - gives avg number of bits needed to encode a word
+
+
+####################################################################################
+NGram Model
+####################################################################################
+- very large
+- very sparse
+
+Implementations
+-----------------
+- kenLM
+
+
+
+
+
+
+####################################################################################
+
+####################################################################################
+
+
+####################################################################################
+2015 Highway network
+####################################################################################
+
+
+
+####################################################################################
+2015 Kim/Rush - character conv model
+####################################################################################
+
+Code
+-----------
+https://github.com/yoonkim/lstm-char-cnn
+
+
+Motivation
+-----------
+While NLMs have been shown to outperform count-based n-gram language models (Mikolov et al. 2011), they are blind to subword information (e.g. morphemes). For example, they do not know, a priori, that eventful, eventfully, uneventful, and uneventfully should have structurally related embeddings in the vector space. Embeddings of rare words can thus be poorly estimated, leading to high perplexities for rare words (and words surrounding them). This is especially problematic in morphologically rich languages with long-tailed frequency distributions or domains with dynamic vocabularies (e.g. social media).
+
+- Unlike previous works that utilize subword information via morphemes (Botha and Blunsom 2014; Luong, Socher, and Manning 2013), our model does not require morphological tagging as a pre-processing step. And, unlike the recent line of work which combines input word embeddings with features from a character-level model (dos Santos and Zadrozny 2014; dos Santos and Guimaraes 2015), our model does not utilize word embeddings at all in the input layer. Given that most of the parameters in NLMs are from the word embeddings, the proposed model has significantly fewer parameters than previous NLMs, making it attractive for applications where model size may be an issue (e.g. cell phones).
+
+
+Structure
+-----------
+- CNN -> RNNLM
+
+CNN
+-----------
+- http://www.wildml.com/2015/11/understanding-convolutional-neural-networks-for-nlp/
+- http://deeplearning.net/tutorial/lenet.html
+- http://cs231n.github.io/convolutional-networks/
+- Adding zero-padding is also called wide convolution, and not using zero-padding would be a narrow convolution.
+- they use narrow
+- Filters of different sizes. Multiple copies (filterbank) for each size.
+- max pool over time (recall that pool is done separately per filter)
+
+
+CNN input
+-------------
+- add start and end of word characters. zero pad words to be the same as max word everytime.
+
+CNN-RNN integration
+------------------
+- replace the input of RNN with CNN vector instead of word embedding
+
+
+RNN training
+-----------------
+- backprop through time
+
+
+Hierarchical softmax
+------------------
+- their version is only 2 levels? They do the "clustering" by random assignment instead of brown clustering or some other more data-driven way.
+- 
+
+Learned Word Representations
+---------------------
+- Before the highway layers the representations seem to solely rely on surface forms—for example the nearest neigh- bors of you are your, young, four, youth, which are close to you in terms of edit distance. The highway layers however, seem to enable encoding of semantic features that are not discernable from orthography alone. After highway layers the nearest neighbor of you is we, which is orthographically distinct from you. Another example is while and though— these words are far apart edit distance-wise yet the composi- tion model is able to place them near each other. 
+- 
+
+
+
+
+####################################################################################
+2016 Google model
+####################################################################################
+
+- https://github.com/dennybritz/deeplearning-papernotes/blob/master/notes/exploring-the-limits-of-lm.md
+

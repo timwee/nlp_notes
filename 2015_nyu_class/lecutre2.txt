@@ -1,0 +1,25 @@
+Features for Classification models, ie for topic
+- word occurence
+- average word length
+- document length
+- document source
+- document layout
+- word occurence
+- ngrams
+- ngram counts
+- tf-idf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

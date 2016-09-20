@@ -1,0 +1,68 @@
+NER
+----------------
+Multi-Task Cross-Lingual Sequence Tagging from Scratch http://arxiv.org/abs/1603.06270
+Neural Architectures for Named Entity Recognition http://arxiv.org/abs/1603.01360
+End-to-end Sequence Labeling via Bi-directional LSTM-CNNs-CRF https://arxiv.org/abs/1603.01354
+
+
+POS
+----------------
+Multi-Task Cross-Lingual Sequence Tagging from Scratch http://arxiv.org/abs/1603.06270
+End-to-end Sequence Labeling via Bi-directional LSTM-CNNs-CRF https://arxiv.org/abs/1603.01354
+
+
+Dependency parsing
+----------------
+On the Properties of Neural Machine Translation: Encoder-Decoder Approaches https://arxiv.org/abs/1409.1259
+
+
+constituency parsing
+-----------------
+https://github.com/dennybritz/deeplearning-papernotes/blob/master/notes/grammar-as-a-foreign-language.md Grammar as a Foreign Langauage
+
+Language model
+----------------
+
+
+
+
+sentiment
+----------------
+https://github.com/miyyer/dan
+ Convolutional Neural Network for Modelling Sentences https://arxiv.org/abs/1404.2188 https://github.com/FredericGodin/DynamicCNN
+
+
+QA
+----------------
+https://github.com/miyyer/dan
+
+
+translation langauge pair
+----------------
+https://github.com/dennybritz/deeplearning-papernotes/blob/master/notes/learning-phrase-representations.md
+
+from Minh-Thang Luong
+---
+Achieving Open Vocabulary Neural Machine Translation with Hybrid Word-Character Models http://arxiv.org/abs/1604.00788
+Effective Approaches to Attention-based Neural Machine Translation http://arxiv.org/abs/1508.04025
+
+
+
+language model
+----------------
+
+
+
+textual entailment
+----------------
+http://nlp.stanford.edu/projects/snli/
+
+
+
+----------------
+
+
+Machine Comprehension
+----------------
+CNN, CBT (children's book test) - machine comprehension benchmarks
+Natural Language Comprehension with the EpiReader

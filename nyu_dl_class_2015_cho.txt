@@ -1,0 +1,6 @@
+ML Overview notes
+------------
+- expected risk minimization
+- empirical risk - via monte carloe sampling or empirical data
+- one of SGD assumptions - data drawn IID
+- 

@@ -1,0 +1,128 @@
+- can use Keras with tensorflow as backend
+	how stable is this?
+- "inference requires less precision than training generally", so can use smaller floats?
+	they use 8-bits.
+- tensor processing unit - specialized hardware
+- https://arxiv.org/abs/1604.00981 revisiting synchronous vs async
+	found that sync is actually faster overall, < noise
+
+
+##################
+PRIMITIVES
+------------------
+
+Operations vs kernels
+----------------
+Operations are abstract operators. Kernels are concrete implementations.
+
+- send and receive are nodes in the graph
+
+
+Graph
+----------------
+- graph is built implicitly
+- automated differentiation just adds nodes to the graph (similar to theano)
+- serialized into graph.proto
+- sent via grpc
+
+
+Sessions and Distributing Computation
+---------------
+- a few processes in distributed setting
+	1. Client process
+	2. Master process
+	3. worker processes
+
+
+
+
+Distributed Placing
+--------------
+- A variable can be pinned to a particular device https://www.tensorflow.org/versions/r0.10/how_tos/variables/index.html#device-placement
+- There's a placement algorithm
+
+
+Tools
+-----------------
+1. TensorBoard
+
+Model structures that optimize for parallel computation
+-----------------
+- multiple "towers" that are independent (AlexNet - 2 towers)
+- local reuse (conv nets)
+- parts of models are only activated for some data/examples
+
+Deep LSTM
+-----------------
+he has example code in slides
+
+
+tensorflow queues
+--------------------
+https://www.tensorflow.org/versions/r0.10/how_tos/threading_and_queues/index.html
+- uses:
+	1. input prefetching
+	2. grouping similar examples
+	3. randomization and shuffling
+
+
+network optimization
+--------------------------
+- they cut off to 16 bits while transferring over network.
+- they don't convert to iEEE 16 bit, they preserve exponent bits and cut off mantissa.
+
+Quantization for inference
+---------------------------
+- quantize weights to 8 bits. (4 8 bit operations per cycle on mobile)
+- Harder to do for training bec. the range for weights that you want will vary through the training process
+
+
+##################################################################################################################
+Google applications
+#######################
+
+Google Photos Search
+--------------
+cluster and search based on content of images
+
+
+Same model repurposed for different purposes
+#######################
+Street View
+----------------
+- text detection "in the wild"
+- google project sunroof
+
+
+RankBrain
+---------------
+- 3rd most important search ranking signal
+- traditionally search ranking team want very explainable models
+
+
+
+Robotics
+----------------
+They don't use ROS, but tensorflow generates motor commands for the robotic software.
+They also do this for simulated robots.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

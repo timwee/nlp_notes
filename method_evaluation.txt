@@ -1,0 +1,6 @@
+When evaluating an ML method for NLP:
+---------------
+1. objective function
+2. Benchmarks on publicly available datasets
+3. What kind of data is it good at? Bad?
+4. How does it handle unknown/unseen/rare words?

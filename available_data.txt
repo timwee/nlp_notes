@@ -1,0 +1,13 @@
+English
+---------------
+1. wordnet
+https://wordnet.princeton.edu/
+https://en.wikipedia.org/wiki/WordNet
+2. chinese wordnet
+http://lope.linguistics.ntu.edu.tw/cwn/
+3. DBPedia
+http://wiki.dbpedia.org/
+4. Google ngram and 1tb data
+
+
+####################################################################################################################################
