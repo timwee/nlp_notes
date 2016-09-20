@@ -60,6 +60,16 @@ CNN
 - Filters of different sizes. Multiple copies (filterbank) for each size.
 - max pool over time (recall that pool is done separately per filter)
 
+CNN dimensions
+-----------
+- given window/filter size d_win
+- each sentence of n words/characters will have (n - d_win + 1) outputs for each filter
+- we do pooling over these (n - d_win + 1) outputs, separately per filter
+
+
+- temporal convolution, time-delay convolution - name for 1-d convolution
+
+
 
 CNN input
 -------------

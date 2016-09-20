@@ -1,0 +1,15 @@
+LSTM inspired
+-----------------
+- adaptive gating for connections jumping across multiple layers
+- have 2 gates (though the made it to be one gate by making the other be the inverse of gate 1)
+	1. transform gate - gate for "transform" layer
+	2. carry gate - gate to "carry over" the input as-is to where this is connected to
+- intution is to p
+
+
+####################################################################################
+
+####################################################################################
+
+
+
